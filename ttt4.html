@@ -1,0 +1,199 @@
+
+<html>
+    <head>
+        <title> Tic Tac Toe - Part 4</title>
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .grid-container {
+                width: 400px;;
+                display:flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                border: 2px solid #1e1550;
+            }
+            .square {
+                width: 100px;
+                height: 100px;
+                margin: 10px;
+                padding: 5px;
+                border: 1px solid #040000;
+
+                font-size: 50px;
+                text-align: center;
+                line-height: 100px;
+            }
+            .square:hover {
+                background-color:rgb(185, 191, 196);
+            }
+            #turns {
+                padding: 8px;
+                margin: 20px;
+                width: 400px;
+                border: 1px solid #1e1550;
+            }
+            #win-condition {
+                padding: 10px;
+                margin: 20px;
+                width: 400px;
+                justify-content: center;
+                border: 1px solid #1e1550;
+
+                font-size: 20px;
+            }
+            #start {
+                font-size: 20px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+        <h1>Tic Tac Toe</h1>
+        <div id = "turns"></div>
+
+        <div class = "grid-container">
+            <script>
+                const NUM_SQUARES = 9;
+
+                for (i = 0; i < NUM_SQUARES; i++) {
+                    id = "sq"+ i;
+                    document.write( "<div class='square' id='" + id + "'></div>");
+                }
+            </script>
+        </div>
+
+        <div id = "win-condition"></div>
+
+        <!-- Start game button -->
+        <button id = "start">Start Game</button>
+        
+        <script>
+            document.getElementById("sq2").innerText = "X";
+            document.getElementById("sq3").innerText = "O";
+        </script>
+
+         
+        <!-- EVENT HANDLER -->
+        <script>
+            currentPlayer = "X";
+            gameActive = true;
+
+            // event handler for clicking squares
+            function clickSquare() {
+                // gets the id of the square that was clicked
+                square = this;
+                squareId = square.id;
+                squareNum = squareId.charAt(2)
+
+                // prevents clicking square twice
+                if (square.innerText != "" || !gameActive) {
+                    return;
+                }
+
+                // adds X or O on clicked square
+                square.innerText = currentPlayer;
+
+                // checks if a player won/theres a stalemate
+                winCondition();
+
+                // alternate turns when game is active
+                if (gameActive) {
+                    if (currentPlayer == "X") { currentPlayer = "O"; }
+                    else { currentPlayer = "X"; }
+
+                    // updates whos current player
+                document.getElementById("turns").innerText = "Player " + currentPlayer + "'s turn";
+                }
+            
+            }
+
+            // function checking win conditions
+            function winCondition() {
+                
+                // creates array of all the objects with class "square"
+                squares = document.querySelectorAll(".square");
+                moves = [];
+
+                squares.forEach ((sq) => {
+                    text = sq.innerText;
+                    if (text == "") { moves.push("-"); }
+                    else { moves.push(text);}
+                });
+
+                winConditions = [
+                    // horizontal 
+                    moves[0] + moves[1] + moves[2],
+                    moves[3] + moves[4] + moves[5],
+                    moves[6] + moves[7] + moves[8],
+                    // vertical
+                    moves[0] + moves[3] + moves[6],
+                    moves[1] + moves[4] + moves[7],
+                    moves[2] + moves[5] + moves[8],
+                    // diagonal
+                    moves[0] + moves[4] + moves[8],
+                    moves[2] + moves[4] + moves[6],
+                ];
+
+                // identifies if there is a win 
+                if (winConditions.indexOf("XXX") != -1) {
+                    // player X wins
+                    document.getElementById("win-condition").innerText = "Player X Wins!!";
+                    gameActive = false;
+                    document.getElementById("start").innerText = "Click to Play Again";
+                    document.getElementById("start").style.display = "block";
+                }
+                else if(winConditions.indexOf("OOO") != -1) {
+                    // player O wins
+                    document.getElementById("win-condition").innerText = "Player O Wins!!";
+                    gameActive = false;
+                    document.getElementById("start").innerText = "Click to Play Again";
+                    document.getElementById("start").style.display = "block";
+                }
+                else if (moves.indexOf("-") == -1) {
+                    // stalemate
+                    document.getElementById("win-condition").innerText = "Stalemate!";
+                    gameActive = false;
+                    document.getElementById("start").innerText = "Click to Play Again";
+                    document.getElementById("start").style.display = "block";
+                }
+            }
+
+            // function to clear and start the game
+            function start() {
+                for (i = 0; i < NUM_SQUARES; i++) {
+                    document.getElementById("sq" + i).innerText = "";
+                }
+
+                // randomly chooses starting player
+                if (Math.random() < 0.5) { currentPlayer = "X"; }
+                else { currentPlayer = "O"; }
+
+                document.getElementById("turns").innerText = "Player " + currentPlayer + "'s turn";
+                gameActive = true;
+
+                // hides start button
+                document.getElementById("start").style.display = "none";
+
+                // clears status
+                document.getElementById("win-condition").innerText = "";
+            }
+
+            // adding event listener to squares and start button
+            window.onload = function() 
+            {
+                for (i = 0; i < NUM_SQUARES; i++) {
+                    document.getElementById("sq" + i).addEventListener("click", clickSquare); 
+                }
+
+                document.getElementById("start").addEventListener("click", start);
+            };
+
+            start();
+        </script>
+    </body>
+</html>
